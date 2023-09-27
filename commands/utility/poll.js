@@ -4,7 +4,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('poll')
         .setDescription('Creates a poll for people to vote on.')
-        .addStringOption(option => option.setName('question').setDescription('The name of the event').setRequired(true)),
+        .addStringOption(option => option.setName('question').setDescription('The question for the poll.').setRequired(true)),
 
     async execute(interaction) {
         const question = interaction.options.getString('question');
