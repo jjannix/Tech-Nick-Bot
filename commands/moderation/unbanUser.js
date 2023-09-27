@@ -9,6 +9,6 @@ module.exports = {
         const user = interaction.options.getUser('target');
         const guild = interaction.guild;
         guild.members.unban(user);
-		return interaction.reply('Pong!');
+		return interaction.reply({content:`Unbanned user: ${user.username}!`, ephemeral: true} );
 	},
 };
