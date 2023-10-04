@@ -3,3 +3,6 @@ node_modules
 config.json
 commandConfig.json
 auth.json
+otu
+assets
+features.txt
