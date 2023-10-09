@@ -1,7 +1,9 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const wait = require('node:timers/promises').setTimeout;
-const { thumbnailImage } = require('../../commandConfig.json')
 const moment = require('moment');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -21,7 +23,7 @@ module.exports = {
         const eventEmbed = new EmbedBuilder()
             .setColor('#FDCE0F')
             .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
-            .setThumbnail(thumbnailImage)
+            .setThumbnail(process.env.thumbnailImage)
             .setTitle(eventName)
             .addFields(
                 { name: '**Datum**', value: date },
