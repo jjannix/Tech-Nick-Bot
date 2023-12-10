@@ -1,20 +1,34 @@
-const { SlashCommandBuilder } = require('discord.js');
-const { logChannel } = require('../../configuration/config.json')
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { logChannel } = require('../../configuration/config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('log')
-        .setDescription('Logs a message to a admin channel')
+        .setDescription('Logs a message to an admin channel')
         .addStringOption(option => option.setName('message').setDescription('The message to log').setRequired(true)),
+        
     async execute(interaction) {
         const message = interaction.options.getString('message');
-
-
         const channel = interaction.guild.channels.cache.get(logChannel);
 
+        // Check if the message is empty or undefined
+        if (!message) {
+            return interaction.reply({ content: 'Error: Message is empty or undefined.', ephemeral: true });
+        }
+
+        const logEmbed = new EmbedBuilder()
+            .setColor('#8625FD')
+            .setTitle('Manual Log')
+            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
+            .setDescription(message)
+            .setTimestamp()
+            .setFooter({ text: '© @jnk 2023' });
+
         if (channel) {
-            channel.send(message);
-            await interaction.reply({content: 'Messsage logged!', ephemeral: true});
+            // Check if the channel is a TextChannel before sending the message
+            
+                await channel.send({ embeds: [logEmbed] });
+                await interaction.reply({ content: 'Message logged!', ephemeral: true });
         } else {
             await interaction.reply('Error: Could not find the specified channel.');
         }
