@@ -17,7 +17,7 @@ module.exports = {
         }
 
         const logEmbed = new EmbedBuilder()
-            .setColor('#8625FD')
+            .setColor('#ABC2C6')
             .setTitle('Manual Log')
             .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
             .setDescription(message)
