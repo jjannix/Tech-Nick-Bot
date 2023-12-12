@@ -11,4 +11,5 @@
     | `/poll`|Creates a simple ✅/❌poll.|Utility|
     | `/say`|Repeats the given message.|Utility|
     | `/log`|Allows for custom entries in the bot-log channel.|Utility|
+    | `/invite`|Creates an invite link for the server. Privately or publicly served.|Utility|
     | `/avatar`|Sends the avatar of a specified User.|Fun|  
