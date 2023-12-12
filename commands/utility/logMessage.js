@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { logChannel } = require('../../configuration/config.json');
+const { logChannelId } = require('../../configuration/config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,7 +9,7 @@ module.exports = {
         
     async execute(interaction) {
         const message = interaction.options.getString('message');
-        const channel = interaction.guild.channels.cache.get(logChannel);
+        const channel = interaction.guild.channels.cache.get(logChannelId);
 
         // Check if the message is empty or undefined
         if (!message) {
