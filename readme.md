@@ -1,5 +1,5 @@
 # Tech-Nick Discord Bot
-- ## List of commands
+ ## List of commands
     | Name        | Description | Category      |
     | ----------- | ----------- |-------------- |
     | `/ban`|Bans a given User, including a reasoning. Can ban non guild-members.|Moderation|
