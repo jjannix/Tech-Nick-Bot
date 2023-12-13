@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { memberRoleId, logChannel } = require('../../configuration/config.json');
+const { memberRoleId, logChannelId } = require('../../configuration/config.json');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,7 +12,7 @@ module.exports = {
         try {
             const user = interaction.options.getMember('user');
             const confirm = interaction.options.getBoolean('confirm');
-            const channel = interaction.guild.channels.cache.get(logChannel);
+            const channel = interaction.guild.channels.cache.get(logChannelId);
 
             const verificationEmbed = new EmbedBuilder()
                 .setColor('#B9FF97')
@@ -40,7 +40,7 @@ module.exports = {
                     try {
                         await user.roles.add(role);
                         await user.send(`Congratulations! You have been verified by ${interaction.user.username}! `);
-                        channel.send({ embeds: [verificationEmbed] });
+                        await channel.send({ embeds: [verificationEmbed] });
                         return interaction.reply({ content: 'User verified!', ephemeral: true });
                     } catch (error) {
                         console.error(error);
