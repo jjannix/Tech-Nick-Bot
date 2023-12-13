@@ -1,6 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const wait = require('node:timers/promises').setTimeout;
-
+const { logChannelId } = require('../../configuration/config.json')
+ 
 module.exports = {
     data: new SlashCommandBuilder()
     .setName('kick')
@@ -10,6 +10,7 @@ module.exports = {
     async execute(interaction) {
         const guild = interaction.guild;
         const user = interaction.options.getUser('target');
+        const channel = await interaction.guild.channels.cache.get(logChannelId);
         const reason = interaction.options.getString('reason');
         const kickEmbed = new EmbedBuilder()
             .setColor('#FFA411')
@@ -25,9 +26,20 @@ module.exports = {
             )
             .setTimestamp()
             .setFooter({ text: '© @jnk 2023' });
+
+            const kickLog = new EmbedBuilder()
+            .setColor('#FFA411')
+            .setAuthor({ name: interaction.user?.tag, iconURL: interaction.user?.displayAvatarURL() })
+            .setTitle('User Kicked')
+            .setDescription(`User **${user.username}** has been kicked by **${interaction.user?.username || 'Unknown User'}**.`)
+            .addFields(
+                { name: 'Reason', value: reason },
+                { name: 'Kicked at', value: new Date().toLocaleString() },
+            )
+            .setTimestamp()
+            .setFooter({ text: '© @jnk 2023' });
         guild.members.kick(user,reason)
-        await interaction.deferReply();
-        await wait(1000);
-        const message = await interaction.editReply({ embeds: [kickEmbed] });
+        channel.send({ embeds: [kickLog] });
+        interaction.reply({ embeds: [kickEmbed] });
     }
 }
