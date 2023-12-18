@@ -1,5 +1,4 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { logChannelId } = require('../../configuration/config.json');
 const dotenv = require ('dotenv')
 
 dotenv.config()
