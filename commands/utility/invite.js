@@ -1,6 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { logChannelId } = require('../../configuration/config.json');
+const dotenv = require ('dotenv')
 
+dotenv.config()
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('invite')
@@ -19,7 +21,7 @@ module.exports = {
             await user.send(`Invite link: ${inviteLink}`);
         }
 
-        const channel = interaction.guild.channels.cache.get(logChannelId);
+        const channel = interaction.guild.channels.cache.get(process.env.logChannelId);
         if (channel) {
             const logEmbed = new EmbedBuilder()
                 .setColor('#753FFF')

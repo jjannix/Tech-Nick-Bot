@@ -1,5 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { memberRoleId, logChannelId } = require('../../configuration/config.json');
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -12,7 +15,7 @@ module.exports = {
         try {
             const user = interaction.options.getMember('user');
             const confirm = interaction.options.getBoolean('confirm');
-            const channel = interaction.guild.channels.cache.get(logChannelId);
+            const channel = interaction.guild.channels.cache.get(process.env.logChannelId);
 
             const verificationEmbed = new EmbedBuilder()
                 .setColor('#B9FF97')
@@ -27,7 +30,7 @@ module.exports = {
             
             if (user.id !== interaction.user.id) {
                 if (confirm === true) {
-                    const role = interaction.guild.roles.cache.get(memberRoleId);
+                    const role = interaction.guild.roles.cache.get(process.env.memberRoleId);
 
                     if (!role) {
                         return interaction.reply({ content: 'Role not found. Please check your configuration.', ephemeral: true });

@@ -1,5 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-const { logChannelId } = require('../../configuration/config.json')
+const { logChannelId } = require('../../configuration/config.json');
+const dotenv = require('dotenv')
+
+dotenv.config()
  
 module.exports = {
     data: new SlashCommandBuilder()
@@ -10,7 +13,7 @@ module.exports = {
     async execute(interaction) {
         const guild = interaction.guild;
         const user = interaction.options.getUser('target');
-        const channel = await interaction.guild.channels.cache.get(logChannelId);
+        const channel = await interaction.guild.channels.cache.get(process.env.logChannelId);
         const reason = interaction.options.getString('reason');
         const kickEmbed = new EmbedBuilder()
             .setColor('#FFA411')

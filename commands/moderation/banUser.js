@@ -1,5 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const { logChannelId } = require('../../configuration/config.json');
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -14,7 +17,7 @@ module.exports = {
         const user = interaction.options.getUser('target');
         const reasonGiven = interaction.options.getString('reason');
         const guild = interaction.guild;
-        const channel = await interaction.guild.channels.cache.get(logChannelId);
+        const channel = await interaction.guild.channels.cache.get(process.env.logChannelId);
         const reason = reasonGiven || 'No reason given';
 
         const banEmbed = new EmbedBuilder()
