@@ -6,6 +6,7 @@
     | `/unban`|Unbans the provided User. Can unban non guild-members.|Moderation|
     | `/editMessage`|Edits a message sent before via its message ID.|Moderation|
     | `/verify`|Verifies a User as a member of the Server.|Moderation|
+    | `/nickname`|Changes the nickname of a user.|Moderation|
     | `/ping`|Tests the availability and responsiveness of the Bot.|Utility|
     | `/event`|Creates a message embed template for the announcement of events.|Utility|
     | `/poll`|Creates a simple ✅/❌poll.|Utility|
