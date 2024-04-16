@@ -30,8 +30,8 @@ module.exports = {
         const banLog = new EmbedBuilder()
             .setColor('#BD3E3C')
             .setAuthor({ name: interaction.user?.tag, iconURL: interaction.user?.displayAvatarURL() })
-            .setTitle('User Banned')
-            .setDescription(`User **${user.username}** has been banned by **${interaction.user?.username || 'Unknown User'}**.`)
+            .setTitle('User banned')
+            .setDescription(`User **${user.username}** has been banned by **${interaction.user?.username || 'Unknown User'}**!`)
             .addFields(
                 { name: 'Reason', value: reason },
                 { name: 'Banned at', value: new Date().toLocaleString() },
