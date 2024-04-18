@@ -28,7 +28,7 @@ module.exports = {
                 .setFooter({ text: '© @jnk 2023' });
             
             if (user.id !== interaction.user.id) {
-                if (confirm === true) {
+                if (confirm) {
                     const role = interaction.guild.roles.cache.get(process.env.memberRoleId);
 
                     if (!role) {
