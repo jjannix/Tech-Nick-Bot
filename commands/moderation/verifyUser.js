@@ -27,6 +27,27 @@ module.exports = {
                 .setTimestamp()
                 .setFooter({ text: '© @jnk 2023' });
             
+                const verificationResult = isEligibleForVerification(user);
+                if (!verificationResult.eligible) {
+
+                    const checkFailedEmbed = new EmbedBuilder()
+                        .setColor('#BD3E3C')
+                        .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
+                        .setTitle('User failed security checks')
+                        .setDescription(`User **${user.user.username}** failed the Tech-Nick security checks.`)
+                        .addFields(
+                            { name: 'User', value: user.user.toString() },
+                            { name: 'Reason', value: verificationResult.reason }
+                        )
+                        .setTimestamp()
+                        .setFooter({ text: '© @jnk 2023' });
+    
+                    await channel.send({ embeds: [checkFailedEmbed] });
+                    return interaction.reply({ content: 'This user is not eligible for verification.', ephemeral: true });
+                }
+
+            
+            
             if (user.id !== interaction.user.id) {
                 if (confirm) {
                     const role = interaction.guild.roles.cache.get(process.env.memberRoleId);
@@ -60,3 +81,20 @@ module.exports = {
         }
     },
 };
+
+
+function isEligibleForVerification(user) {
+    // Check if the user is a bot
+    if (user.user.bot) {
+        return { eligible: false, reason: 'User is a bot' };
+    }
+    
+    // Check if the user has been on Discord for at least a week
+    const accountCreatedDate = user.user.createdAt;
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    if (accountCreatedDate > oneWeekAgo) {
+        return { eligible: false, reason: 'Account is too new' };
+    }
+
+    return { eligible: true };
+}
