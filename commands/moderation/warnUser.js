@@ -25,7 +25,8 @@ module.exports = {
         const user = interaction.options.getUser('user');
         const reason = interaction.options.getString('reason');
         const channel = await interaction.guild.channels.fetch(process.env.logChannelId);
-
+        const bot = interaction.client.user; // Fetch the bot user
+        
         const logEmbed = new EmbedBuilder()
             .setColor('#E7823A')
             .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
@@ -41,7 +42,7 @@ module.exports = {
 
         const warnEmbed = new EmbedBuilder()
             .setColor('#E7823A')
-            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
+            .setAuthor({ name: bot.tag, iconURL: bot.displayAvatarURL() })
             .setTitle('You have been warned')
             .setDescription(`You have been warned for ${reason}`)
             .addFields(
@@ -56,4 +57,4 @@ module.exports = {
         channel.send({ embeds: [logEmbed] });
     }
 
-}                                                                               
+}
