@@ -1,5 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const dotenv = require('dotenv')
+const { isHighLatency } = require('../functions/highLatency');
 
 dotenv.config()
 
@@ -12,6 +13,12 @@ module.exports = {
 
     async execute(interaction) {
         try {
+            const reply = await interaction.reply({ content: "Attempting to verify...", fetchReply: true });
+            const ping = reply.createdTimestamp - interaction.createdTimestamp;
+            const channelCache = interaction.client.channels.cache;
+            if (await isHighLatency(ping, interaction, channelCache)) {
+            console.log(`High latency detected for ping command: ${ping}ms`);
+             }
             const user = interaction.options.getMember('user');
             const confirm = interaction.options.getBoolean('confirm');
             const channel = interaction.guild.channels.cache.get(process.env.logChannelId);
@@ -23,6 +30,7 @@ module.exports = {
                 .setDescription(`User **${user.user.username}** has been verified by **${interaction.user.username}**.`)
                 .addFields(
                     { name: 'Verified at', value: new Date().toLocaleString() },
+                    { name: 'Interaction ID', value: interaction.id }, 
                 )
                 .setTimestamp()
                 .setFooter({ text: '© @jnk 2023' });
@@ -43,7 +51,7 @@ module.exports = {
                         .setFooter({ text: '© @jnk 2023' });
     
                     await channel.send({ embeds: [checkFailedEmbed] });
-                    return interaction.reply({ content: 'This user is not eligible for verification.', ephemeral: true });
+                    return interaction.editReply({ content: 'This user is not eligible for verification.', ephemeral: true });
                 }
 
             
@@ -53,31 +61,31 @@ module.exports = {
                     const role = interaction.guild.roles.cache.get(process.env.memberRoleId);
 
                     if (!role) {
-                        return interaction.reply({ content: 'Role not found. Please check your configuration.', ephemeral: true });
+                        return interaction.editReply({ content: 'Role not found. Please check your configuration.', ephemeral: true });
                     }
 
                     if (user.roles.cache.has(role.id)) {
-                        return interaction.reply({ content: 'User already verified!', ephemeral: true });
+                        return interaction.editReply({ content: 'User already verified!', ephemeral: true });
                     }
 
                     try {
                         await user.roles.add(role);
                         await user.send(`Congratulations! You have been verified by ${interaction.user.username}! `);
                         await channel.send({ embeds: [verificationEmbed] });
-                        return interaction.reply({ content: 'User verified!', ephemeral: true });
+                        return interaction.editReply({ content: 'User verified!', ephemeral: true });
                     } catch (error) {
                         console.error(error);
-                        return interaction.reply({ content: 'Error adding role to user.', ephemeral: true });
+                        return interaction.editReply({ content: 'Error adding role to user.', ephemeral: true });
                     }
                 } else {
-                    return interaction.reply({ content: 'Verification not confirmed.', ephemeral: true });
+                    return interaction.editReply({ content: 'Verification not confirmed.', ephemeral: true });
                 }
             } else {
-                return interaction.reply({ content: 'You cannot verify yourself!', ephemeral: true });
+                return interaction.editReply({ content: 'You cannot verify yourself!', ephemeral: true });
             }
         } catch (error) {
             console.error(error);
-            return interaction.reply({ content: 'An error occurred during verification.', ephemeral: true });
+            return interaction.editReply({ content: 'An error occurred during verification.', ephemeral: true });
         }
     },
 };
