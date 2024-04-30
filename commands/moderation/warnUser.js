@@ -36,6 +36,7 @@ module.exports = {
                 { name: 'Warned by', value: interaction.user.tag },
                 { name: 'Reason', value: reason },
                 { name: 'Specification', value: interaction.options.getString('specification') || 'No Specification' },
+                { name: 'Interaction ID', value: interaction.id },
             )
             .setTimestamp()
             .setFooter({ text: '© @jnk 2023' });

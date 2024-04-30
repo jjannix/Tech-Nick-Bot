@@ -24,6 +24,7 @@ module.exports = {
                 { name: 'Message ID', value: messageID },
                 { name: 'Old content', value: message.content },
                 { name: 'New content', value: newmessage },
+                { name: 'Interaction ID', value: interaction.id },
             )
             .setTimestamp()
             .setFooter({ text: '© @jnk 2023' });

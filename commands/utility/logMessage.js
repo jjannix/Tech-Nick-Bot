@@ -22,6 +22,9 @@ module.exports = {
             .setTitle('Manual Log')
             .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
             .setDescription(message)
+            .addFields(
+                { name: 'Interaction ID', value: interaction.id },
+            )
             .setTimestamp()
             .setFooter({ text: '© @jnk 2023' });
 

@@ -24,6 +24,7 @@ module.exports = {
                 { name: 'Reason', value: reason },
                 { name: 'Kicked by', value: interaction.user.username },
                 { name: 'Kicked at', value: new Date().toLocaleString() },
+                { name: 'Interaction ID', value: interaction.id },
                 //{ name: 'Kicked in', value: guild.name },
             )
             .setTimestamp()

@@ -22,6 +22,7 @@ module.exports = {
 
         const channel = interaction.guild.channels.cache.get(process.env.logChannelId);
         if (channel) {
+
             const logEmbed = new EmbedBuilder()
                 .setColor('#753FFF')
                 .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
@@ -30,6 +31,7 @@ module.exports = {
                 .addFields(
                     { name: 'Channel', value: `${interaction.channel.name}`, inline: true },
                     { name: 'Private', value: `${private === true ? 'true' : 'false'}`, inline: true },
+                    { name: 'Interaction ID', value: interaction.id },
                 )
                 
                 

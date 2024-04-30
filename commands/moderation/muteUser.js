@@ -25,6 +25,8 @@ module.exports = {
                 .setDescription(`User **${user.user.username}** has been muted by **${interaction.user?.username || 'Unknown User'}** :mute:.`)
                 .addFields(
                     { name: 'Reason', value: reason },
+                    { name: 'Muted at', value: new Date().toLocaleString() },
+                    { name: 'Interaction ID', value: interaction.id },
                 )
                 .setTimestamp()
                 .setFooter({ text: '© @jnk 2023' });
