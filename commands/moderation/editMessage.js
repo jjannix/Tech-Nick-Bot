@@ -12,24 +12,28 @@ module.exports = {
         const newmessage = interaction.options.getString('newmessage');
         const channel = await interaction.guild.channels.cache.get(process.env.logChannelId);
 
-        message.edit(newmessage);
-        interaction.reply({ content: 'Message edited!', ephemeral: true });
+        if (message) {
+            const oldContent = message.content || "No content";
+            message.edit(newmessage);
+            interaction.reply({ content: 'Message edited!', ephemeral: true });
 
-        const editLog = new EmbedBuilder()
-            .setColor('#E7DC7C')
-            .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() }) // Access user info directly from interaction
-            .setTitle('Message edited')
-            .setDescription(`User **${interaction.user.username}** has edited a message in <#${interaction.channelId}>!`) // Access user info directly from interaction
-            .addFields(
-                { name: 'Message ID', value: messageID },
-                { name: 'Old content', value: message.content },
-                { name: 'New content', value: newmessage },
-                { name: 'Interaction ID', value: interaction.id },
-            )
-            .setTimestamp()
-            .setFooter({ text: '© @jnk 2023' });
+            const editLog = new EmbedBuilder()
+                .setColor('#E7DC7C')
+                .setAuthor({ name: interaction.user.tag, iconURL: interaction.user.displayAvatarURL() })
+                .setTitle('Message edited')
+                .setDescription(`User **${interaction.user.username}** has edited a message in <#${interaction.channelId}>!`)
+                .addFields(
+                    { name: 'Message ID', value: messageID },
+                    { name: 'Old content', value: oldContent },
+                    { name: 'New content', value: newmessage },
+                    { name: 'Interaction ID', value: interaction.id },
+                )
+                .setTimestamp()
+                .setFooter({ text: '© @jnk 2023' });
 
-        channel.send({ embeds: [editLog] });
-
+            channel.send({ embeds: [editLog] });
+        } else {
+            interaction.reply({ content: 'Message not found!', ephemeral: true });
+        }
     }
 }
