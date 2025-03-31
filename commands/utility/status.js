@@ -1,6 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const dotenv = require('dotenv');
 const ping = require('ping');
+const embedFooter = require('../functions/embedFooter');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -25,7 +26,7 @@ module.exports = {
                 { name: 'Errors', value: errors || 'No current errors' }
             )
             .setTimestamp()
-            .setFooter({ text: '© @jnk 2023' });
+            .setFooter({ text: embedFooter() });
 
         interaction.editReply({ embeds: [statusEmbed] });
     },
@@ -70,7 +71,7 @@ async function checkStatus(interaction) {
     const pingStatus = `Bot Latency: ${botPing}ms`;
 
     let overallStatus = 'All systems operational!';
-    const latencyThreshold = process.env.latencyThreshold;
+    const latencyThreshold = parseInt(process.env.latencyThreshold) || 500;
 
     let errors = '';
 
