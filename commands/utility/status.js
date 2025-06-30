@@ -8,11 +8,11 @@ module.exports = {
         .setName('status')
         .setDescription('Checks the Bot status'),
 
-    async execute(interaction) {
+    async execute(interaction, client) {
         await interaction.deferReply();
 
-        const systemsStatus = await checkStatus(interaction);
-        const { overallStatus, envStatus, pingStatus, cloudflareStatus, errors } = systemsStatus;
+        const systemsStatus = await checkStatus(interaction, client);
+        const { overallStatus, botLatency, apiLatency, uptime, memoryUsage, cloudflareStatus, errors } = systemsStatus;
         const embedColor = determineStatusColor(overallStatus);
 
         const statusEmbed = new EmbedBuilder()
@@ -20,9 +20,12 @@ module.exports = {
             .setTitle('Bot Status')
             .addFields(
                 { name: 'Overall Status', value: overallStatus },
-                { name: 'API Status', value: pingStatus },
+                { name: 'Bot Latency', value: botLatency, inline: true },
+                { name: 'API Latency', value: apiLatency, inline: true },
+                { name: 'Uptime', value: uptime, inline: true },
+                { name: 'Memory Usage', value: memoryUsage, inline: true },
                 { name: 'Cloudflare Status', value: cloudflareStatus.value, inline: cloudflareStatus.inline },
-                { name: 'Environment Variables', value: envStatus },
+                
                 { name: 'Errors', value: errors || 'No current errors' }
             )
             .setTimestamp()
@@ -32,26 +35,10 @@ module.exports = {
     },
 };
 
-async function checkStatus(interaction) {
+async function checkStatus(interaction, client) {
     dotenv.config();
 
-    const excludedVariables = ['axm_actions', 'filter_env', 'node_args'];
-
-    const envVariables = Object.keys(process.env);
-    const missingEnvVariables = envVariables.filter(variable => {
-        // Exclude the specified variables from the check
-        if (excludedVariables.includes(variable)) {
-            return false;
-        }
-        return !process.env[variable];
-    });
-
-    let envStatus = '';
-    if (missingEnvVariables.length > 0) {
-        envStatus = `:x: Error! Missing values for environment variables: ${missingEnvVariables.join(', ')}\n`;
-    } else {
-        envStatus = 'All environment variables have values assigned.\n';
-    }
+    
 
     let cloudflareStatus = { value: '', inline: true };
     try {
@@ -67,26 +54,33 @@ async function checkStatus(interaction) {
     }
 
     const reply = await interaction.fetchReply();
-    const botPing = reply.createdTimestamp - interaction.createdTimestamp;
-    const pingStatus = `Bot Latency: ${botPing}ms`;
+    const botLatency = `${reply.createdTimestamp - interaction.createdTimestamp}ms`;
+    const apiLatency = `${client.ws.ping}ms`;
+
+    const uptime = formatUptime(client.uptime);
+
+    const memoryUsage = `${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB`;
 
     let overallStatus = 'All systems operational!';
     const latencyThreshold = parseInt(process.env.latencyThreshold) || 500;
+    const memoryThreshold = parseInt(process.env.memoryThreshold) || 200; // MB
 
     let errors = '';
 
-    if (missingEnvVariables.length > 0 && (botPing > latencyThreshold || cloudflareStatus.value.includes('Error'))) {
+    const isHighLatency = parseInt(botLatency) > latencyThreshold || parseInt(apiLatency) > latencyThreshold;
+    const isHighMemory = parseFloat(memoryUsage) > memoryThreshold;
+    const isCloudflareIssue = cloudflareStatus.value.includes('Error') || cloudflareStatus.value.includes('Offline');
+
+    if (isHighLatency || isHighMemory || isCloudflareIssue) {
         overallStatus = 'Multiple systems are currently experiencing issues!\nFunctionality may be limited!';
-        errors = 'Unassigned environment variables, High latency or Cloudflare issue detected';
-    } else if (missingEnvVariables.length > 0) {
-        overallStatus = 'Some systems are experiencing issues due to unassigned environment variables!';
-        errors = 'Unassigned environment variables';
-    } else if (botPing > latencyThreshold || cloudflareStatus.value.includes('Error')) {
-        overallStatus = 'Warning: High latency or Cloudflare issue detected!';
-        errors = 'High latency or Cloudflare issue detected';
+        const errorList = [];
+        if (isHighLatency) errorList.push('High latency');
+        if (isHighMemory) errorList.push('High memory usage');
+        if (isCloudflareIssue) errorList.push('Cloudflare issue');
+        errors = errorList.join(', ');
     }
 
-    return { overallStatus, envStatus, pingStatus, cloudflareStatus, errors };
+    return { overallStatus, botLatency, apiLatency, uptime, memoryUsage, cloudflareStatus, errors };
 }
 
 async function pingCloudflare() {
@@ -103,6 +97,15 @@ async function pingCloudflare() {
         console.error('Error while pinging Cloudflare:', error.message);
         throw error;
     }
+}
+
+function formatUptime(ms) {
+    const seconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    return `${days}d ${hours % 24}h ${minutes % 60}m ${seconds % 60}s`;
 }
 
 function determineStatusColor(overallStatus) {

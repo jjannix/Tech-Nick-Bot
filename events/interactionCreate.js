@@ -12,8 +12,8 @@ module.exports = {
 			return;
 		}
 
-		try {
-			await command.execute(interaction);
+				try {
+			await command.execute(interaction, interaction.client);
 		} catch (error) {
 			console.error(`Error executing ${interaction.commandName}`);
 			console.error(error);
